@@ -8,11 +8,13 @@ import { Icon, LucideIcon } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/app/redux';
 import { usePathname } from 'next/navigation';
 import { setIsSidebarCollapsed } from '@/state';
+import { useGetProjectsQuery } from '@/state/api';
 
 const Sidebar = () => {
   const [showProjects, setShowProjects] = useState(true);
   const [showPriority, setShowPriority] = useState(true);
 
+  const { data: projects } = useGetProjectsQuery();
   const dispatch = useAppDispatch();
   const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed)
 
@@ -95,7 +97,14 @@ const Sidebar = () => {
             ) : <ChevronDown className='w-5 h-5' />}
         </button>
         {/* Projects Lists */}
-
+        {showProjects && projects?.map((project) => (
+          <SidebarLink 
+            key={project.id}
+            icon={Briefcase}
+            label={project.name}
+            href={`/projects/${project.id}`}
+          />
+        ))}
         {/* Priorities */}
         <button 
           onClick={() => setShowPriority((prev) => !prev)} 
