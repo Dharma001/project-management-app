@@ -96,7 +96,7 @@ const Sidebar = () => {
               <ChevronUp className='h-5 w-5' />
             ) : <ChevronDown className='w-5 h-5' />}
         </button>
-        {/* Projects Lists */}
+        {/* PROJECTS LISTS */}
         {showProjects && projects?.map((project) => (
           <SidebarLink 
             key={project.id}
@@ -105,41 +105,41 @@ const Sidebar = () => {
             href={`/projects/${project.id}`}
           />
         ))}
-        {/* Priorities */}
-        <button 
-          onClick={() => setShowPriority((prev) => !prev)} 
-          className='flex w-full items-center justify-between px-8 py-3 text-gray-500'>
-            <span className=''>Priority</span>
-            {showPriority ? (
-              <ChevronUp className='h-5 w-5' />
-            ) : <ChevronDown className='w-5 h-5' />}
+
+        {/* PRIORITIES LINKS */}
+        <button
+          onClick={() => setShowPriority((prev) => !prev)}
+          className="flex w-full items-center justify-between px-8 py-3 text-gray-500"
+        >
+          <span className="">Priority</span>
+          {showPriority ? (
+            <ChevronUp className="h-5 w-5" />
+          ) : (
+            <ChevronDown className="h-5 w-5" />
+          )}
         </button>
         {showPriority && (
           <>
             <SidebarLink
-              label='Urgent'
               icon={AlertCircle}
-              href='/priority/urgent'
+              label="Urgent"
+              href="/priority/urgent"
             />
             <SidebarLink
-              label='High'
               icon={ShieldAlert}
-              href='/priority/high'
+              label="High"
+              href="/priority/high"
             />
             <SidebarLink
-              label='Medium'
               icon={AlertTriangle}
-              href='/priority/medium'
+              label="Medium"
+              href="/priority/medium"
             />
+            <SidebarLink icon={AlertOctagon} label="Low" href="/priority/low" />
             <SidebarLink
-              label='Low'
-              icon={AlertOctagon}
-              href='/priority/low'
-            />
-            <SidebarLink
-              label='Backlog'
               icon={Layers3}
-              href='/priority/backlog'
+              label="Backlog"
+              href="/priority/backlog"
             />
           </>
         )}

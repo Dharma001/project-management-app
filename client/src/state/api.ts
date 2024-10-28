@@ -1,4 +1,5 @@
 import { createApi , fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Search } from "lucide-react";
 
 export interface Project{
   id: number;
@@ -18,7 +19,7 @@ export enum Priority {
 
 export enum Status {
   ToDo = "To Do",
-  WorkProgress = "Work In Progress",
+  WorkInProgress = "Work In Progress",
   UnderReview = "Under Review",
   Completed = "Completed"
 }
@@ -57,6 +58,12 @@ export interface Task{
   assignee?: User;
   comments?: Comment[];
   attachments?: Attachment[];
+}
+
+export interface SearchResults {
+  tasks?: Task[];
+  projects?: Project[];
+  users?: User[];
 }
 
 export const api = createApi({
@@ -101,7 +108,16 @@ export const api = createApi({
         { type: "Tasks", id: taskId },
       ],
     }),
+    search: build.query<SearchResults, string>({
+      query: (query) => `search?query=${query}`,
+    }),
   }),
 })
 
-export const { useGetProjectsQuery , useCreateTaskMutation, useGetTasksQuery, useCreateProjectMutation , useUpdateTaskStatusMutation} = api;
+export const { useGetProjectsQuery,
+               useCreateTaskMutation,
+               useSearchQuery,
+               useGetTasksQuery,
+               useCreateProjectMutation,
+               useUpdateTaskStatusMutation
+              } = api;
