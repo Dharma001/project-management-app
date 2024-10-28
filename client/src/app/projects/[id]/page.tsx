@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import ProjectHeader from '@/app/projects/ProjectHeader';
 import Board from '../BoardView';
 import ListView from '../ListView';
+import Timeline from '../TimelineView';
+import { Table } from 'lucide-react';
 
 type Props = {
   params: {id: string}
@@ -21,6 +23,12 @@ const Projects = ({ params }: Props) => {
      )}
     {activeTab === "List" && (
        <ListView id={ id } setIsModalNewTaskOpen={setIsModalNewTaskOpen} />
+     )}
+    {activeTab === "Timeline" && (
+       <Timeline id={ id } setIsModalNewTaskOpen={setIsModalNewTaskOpen} />
+     )}
+    {activeTab === "Table" && (
+       <Table id={ id } setIsModalNewTaskOpen={setIsModalNewTaskOpen} />
      )}
     </div>
   );
