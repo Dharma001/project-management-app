@@ -1,5 +1,4 @@
 import { createApi , fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Search } from "lucide-react";
 
 export interface Project{
   id: number;
@@ -66,10 +65,17 @@ export interface SearchResults {
   users?: User[];
 }
 
+export interface Team {
+  teamId: number;
+  teamName: string;
+  productOwnerUserId?: number;
+  projectManagerUserId?:  number;
+}
+
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL}),
   reducerPath: 'api',
-  tagTypes: ["Projects" , "Tasks" , "Users"],
+  tagTypes: ["Projects" , "Tasks" , "Users" , "Teams"],
   endpoints: (build) => ({
     getProjects: build.query<Project[], void>({
       query: () => "projects",
@@ -98,6 +104,13 @@ export const api = createApi({
       }),
       invalidatesTags: ["Tasks"]
     }),
+    getTasksByUser: build.query<Task[], number>({
+      query: (userId) => `tasks/user/${userId}`,
+      providesTags: (result, error, userId) =>
+        result
+          ? result.map(({ id }) => ({ type: "Tasks", id }))
+          : [{ type: "Tasks", id: userId }],
+    }),
     updateTaskStatus: build.mutation<Task, {taskId: number; status: string}>({
       query: ({ taskId , status }) => ({
         url: `tasks/${taskId}/status`,
@@ -109,8 +122,12 @@ export const api = createApi({
       ],
     }),
     getUsers: build.query<User[], void>({
-      query:() => "users",
-      providesTags: ["Users"]
+      query: () => "users",
+      providesTags: ["Users"],
+    }),
+    getTeams: build.query<Team[], void>({
+      query: () => "teams",
+      providesTags: ["Teams"],
     }),
     search: build.query<SearchResults, string>({
       query: (query) => `search?query=${query}`,
@@ -124,5 +141,7 @@ export const { useGetProjectsQuery,
                useGetTasksQuery,
                useCreateProjectMutation,
                useUpdateTaskStatusMutation,
-               useGetUsersQuery
+               useGetUsersQuery,
+               useGetTeamsQuery,
+               useGetTasksByUserQuery
               } = api;

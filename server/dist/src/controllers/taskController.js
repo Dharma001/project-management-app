@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateTaskStatus = exports.createTask = exports.getTasks = void 0;
+exports.getUserTasks = exports.updateTaskStatus = exports.createTask = exports.getTasks = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -23,20 +23,20 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 author: true,
                 assignee: true,
                 comments: true,
-                attachments: true
-            }
+                attachments: true,
+            },
         });
         res.json(tasks);
     }
     catch (error) {
         res
             .status(500)
-            .json({ message: `Error retrieving tasks ${error.message} ` });
+            .json({ message: `Error retrieving tasks: ${error.message}` });
     }
 });
 exports.getTasks = getTasks;
 const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, status, priority, tags, startDate, dueDate, points, projectId, authorUserId, assignedUserId } = req.body;
+    const { title, description, status, priority, tags, startDate, dueDate, points, projectId, authorUserId, assignedUserId, } = req.body;
     try {
         const newTask = yield prisma.task.create({
             data: {
@@ -50,15 +50,15 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 points,
                 projectId,
                 authorUserId,
-                assignedUserId
-            }
+                assignedUserId,
+            },
         });
         res.status(201).json(newTask);
     }
     catch (error) {
         res
             .status(500)
-            .json({ message: `Error creating task ${error.message}` });
+            .json({ message: `Error creating a task: ${error.message}` });
     }
 });
 exports.createTask = createTask;
@@ -66,20 +66,42 @@ const updateTaskStatus = (req, res) => __awaiter(void 0, void 0, void 0, functio
     const { taskId } = req.params;
     const { status } = req.body;
     try {
-        const updatedTasks = yield prisma.task.update({
+        const updatedTask = yield prisma.task.update({
             where: {
                 id: Number(taskId),
             },
             data: {
-                status: status
-            }
+                status: status,
+            },
         });
-        res.json(updatedTasks);
+        res.json(updatedTask);
+    }
+    catch (error) {
+        res.status(500).json({ message: `Error updating task: ${error.message}` });
+    }
+});
+exports.updateTaskStatus = updateTaskStatus;
+const getUserTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    try {
+        const tasks = yield prisma.task.findMany({
+            where: {
+                OR: [
+                    { authorUserId: Number(userId) },
+                    { assignedUserId: Number(userId) },
+                ],
+            },
+            include: {
+                author: true,
+                assignee: true,
+            },
+        });
+        res.json(tasks);
     }
     catch (error) {
         res
             .status(500)
-            .json({ message: `Error updating tasks ${error.message} ` });
+            .json({ message: `Error retrieving user's tasks: ${error.message}` });
     }
 });
-exports.updateTaskStatus = updateTaskStatus;
+exports.getUserTasks = getUserTasks;
